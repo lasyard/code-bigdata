@@ -61,6 +61,7 @@
         <module>zookeeper</module>
         <module>hbase</module>
         <module>kafka</module>
+        <module>flink</module>
     </modules>
 
     <properties>
@@ -85,8 +86,14 @@
         <!-- kafka -->
         <kafka.version>2.6.0</kafka.version>
 
+        <!-- flink -->
+        <flink.version>1.12.0</flink.version>
+
         <!-- facilities -->
         <lombok.version>1.18.16</lombok.version>
+
+        <!-- apache commons -->
+        <commons-io.version>2.8.0</commons-io.version>
 
         <!-- logging -->
         <slf4j.version>1.7.30</slf4j.version>
@@ -184,11 +191,35 @@
                 <version>${kafka.version}</version>
             </dependency>
 
+            <!-- flink -->
+            <dependency>
+                <groupId>org.apache.flink</groupId>
+                <artifactId>flink-java</artifactId>
+                <version>${flink.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.flink</groupId>
+                <artifactId>flink-clients_2.12</artifactId>
+                <version>${flink.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.flink</groupId>
+                <artifactId>flink-runtime-web_2.12</artifactId>
+                <version>${flink.version}</version>
+            </dependency>
+
             <!-- facilities -->
             <dependency>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
                 <version>${lombok.version}</version>
+            </dependency>
+
+            <!-- apache commons -->
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>${commons-io.version}</version>
             </dependency>
 
             <!-- logging -->

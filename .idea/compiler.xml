@@ -12,6 +12,7 @@
         <module name="curator" />
         <module name="io" />
         <module name="kafka" />
+        <module name="dataset" />
         <module name="notify" />
         <module name="hbase" />
       </profile>
@@ -19,6 +20,8 @@
     <bytecodeTargetLevel>
       <module name="bigdata-parent" target="1.8" />
       <module name="curator" target="1.8" />
+      <module name="dataset" target="1.8" />
+      <module name="flink" target="1.8" />
       <module name="hadoop" target="1.8" />
       <module name="hbase" target="1.8" />
       <module name="io" target="1.8" />
