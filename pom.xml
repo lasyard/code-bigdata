@@ -59,6 +59,7 @@
     <modules>
         <module>hadoop</module>
         <module>zookeeper</module>
+        <module>hbase</module>
     </modules>
 
     <properties>
@@ -73,6 +74,9 @@
         <!-- zookeeper -->
         <zookeeper.version>3.6.2</zookeeper.version>
         <curator.version>5.1.0</curator.version>
+
+        <!-- hbase -->
+        <hbase.version>2.2.6</hbase.version>
 
         <!-- facilities -->
         <lombok.version>1.18.16</lombok.version>
@@ -135,6 +139,23 @@
                 <groupId>org.apache.curator</groupId>
                 <artifactId>curator-recipes</artifactId>
                 <version>${curator.version}</version>
+            </dependency>
+
+            <!-- hbase -->
+            <dependency>
+                <groupId>org.apache.hbase</groupId>
+                <artifactId>hbase-client</artifactId>
+                <version>${hbase.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>log4j</groupId>
+                        <artifactId>log4j</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>slf4j-log4j12</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
             <!-- facilities -->

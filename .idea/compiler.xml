@@ -12,12 +12,14 @@
         <module name="curator" />
         <module name="notify" />
         <module name="io" />
+        <module name="hbase" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="bigdata-parent" target="1.8" />
       <module name="curator" target="1.8" />
       <module name="hadoop" target="1.8" />
+      <module name="hbase" target="1.8" />
       <module name="io" target="1.8" />
       <module name="notify" target="1.8" />
       <module name="watcher" target="1.8" />

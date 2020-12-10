@@ -128,13 +128,12 @@ public class HadoopIT {
 
     @Test
     public void makeQualifiedTest() throws Exception {
-        Configuration configuration = new Configuration();
-        configuration.addResource("server.xml");
-        FileSystem fileSystem = FileSystem.get(configuration);
-        final String testPath = "io/github/lasyard/bigdata/hadoop/io";
-        Path path = fileSystem.makeQualified(new Path(testPath));
-        String root = configuration.get("fs.defaultFS");
-        String user = System.getProperty("user.name");
-        assertThat(path.toString(), is(root + "/user/" + user + "/" + testPath));
+        try (FileSystem fileSystem = openHdfs()) {
+            String root = fileSystem.getConf().get("fs.defaultFS");
+            String user = System.getProperty("user.name");
+            final String testPath = "test";
+            Path path = fileSystem.makeQualified(new Path(testPath));
+            assertThat(path.toString(), is(root + "/user/" + user + "/" + testPath));
+        }
     }
 }
