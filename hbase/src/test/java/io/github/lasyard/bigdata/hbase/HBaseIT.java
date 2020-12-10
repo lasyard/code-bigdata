@@ -35,7 +35,6 @@ import org.junit.AfterClass;
 import org.junit.Test;
 
 import java.io.IOException;
-import javax.annotation.Nonnull;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -65,25 +64,27 @@ public class HBaseIT {
         }
     }
 
-    private void createTableIfNotExists(@Nonnull Connection connection) throws IOException {
-        try (Admin admin = connection.getAdmin()) {
-            TableName tableName = TableName.valueOf(TABLE_NAME);
-            if (admin.tableExists(tableName)) {
-                return;
+    private void createTableIfNotExists() throws IOException {
+        try (Connection connection = getConnection()) {
+            try (Admin admin = connection.getAdmin()) {
+                TableName tableName = TableName.valueOf(TABLE_NAME);
+                if (admin.tableExists(tableName)) {
+                    return;
+                }
+                TableDescriptor table = TableDescriptorBuilder.newBuilder(tableName)
+                    .setColumnFamily(
+                        ColumnFamilyDescriptorBuilder.newBuilder(Bytes.toBytes(COLUMN_FAMILY))
+                            .setCompressionType(Compression.Algorithm.NONE).build()
+                    ).build();
+                admin.createTable(table);
             }
-            TableDescriptor table = TableDescriptorBuilder.newBuilder(tableName)
-                .setColumnFamily(
-                    ColumnFamilyDescriptorBuilder.newBuilder(Bytes.toBytes(COLUMN_FAMILY))
-                        .setCompressionType(Compression.Algorithm.NONE).build()
-                ).build();
-            admin.createTable(table);
         }
     }
 
     @Test
     public void createTableTest() throws IOException {
+        createTableIfNotExists();
         try (Connection connection = getConnection()) {
-            createTableIfNotExists(connection);
             try (Admin admin = connection.getAdmin()) {
                 assertTrue(admin.tableExists(TableName.valueOf(TABLE_NAME)));
             }
@@ -92,8 +93,8 @@ public class HBaseIT {
 
     @Test
     public void putGetTest() throws IOException {
+        createTableIfNotExists();
         try (Connection connection = getConnection()) {
-            createTableIfNotExists(connection);
             TableName tableName = TableName.valueOf(TABLE_NAME);
             try (Table table = connection.getTable(TableName.valueOf(TABLE_NAME))) {
                 byte[] cf = Bytes.toBytes(COLUMN_FAMILY);

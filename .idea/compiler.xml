@@ -10,8 +10,9 @@
         <module name="watcher" />
         <module name="word_count" />
         <module name="curator" />
-        <module name="notify" />
         <module name="io" />
+        <module name="kafka" />
+        <module name="notify" />
         <module name="hbase" />
       </profile>
     </annotationProcessing>
@@ -21,6 +22,7 @@
       <module name="hadoop" target="1.8" />
       <module name="hbase" target="1.8" />
       <module name="io" target="1.8" />
+      <module name="kafka" target="1.8" />
       <module name="notify" target="1.8" />
       <module name="watcher" target="1.8" />
       <module name="word_count" target="1.8" />
