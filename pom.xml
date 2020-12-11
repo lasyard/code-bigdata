@@ -73,6 +73,9 @@
         <!-- jackson -->
         <jackson.version>2.11.2</jackson.version>
 
+        <!-- opencsv -->
+        <opencsv.version>5.3</opencsv.version>
+
         <!-- hadoop -->
         <hadoop.version>3.2.1</hadoop.version>
 
@@ -125,6 +128,13 @@
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
                 <version>${jackson.version}</version>
+            </dependency>
+
+            <!-- opencsv -->
+            <dependency>
+                <groupId>com.opencsv</groupId>
+                <artifactId>opencsv</artifactId>
+                <version>${opencsv.version}</version>
             </dependency>
 
             <!-- hadoop -->

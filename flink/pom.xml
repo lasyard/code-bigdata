@@ -35,6 +35,7 @@
     <modules>
         <module>dataset</module>
         <module>streaming</module>
+        <module>timer</module>
     </modules>
 
     <dependencies>

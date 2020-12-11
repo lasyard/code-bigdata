@@ -5,6 +5,8 @@
     <file url="file://$PROJECT_DIR$/flink/dataset/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/flink/streaming/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/flink/streaming/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/flink/timer/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/flink/timer/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/hadoop/io/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/hadoop/io/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/hadoop/notify/src/main/java" charset="UTF-8" />

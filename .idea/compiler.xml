@@ -8,6 +8,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="watcher" />
+        <module name="timer" />
         <module name="word_count" />
         <module name="curator" />
         <module name="streaming" />
@@ -29,6 +30,7 @@
       <module name="kafka" target="1.8" />
       <module name="notify" target="1.8" />
       <module name="streaming" target="1.8" />
+      <module name="timer" target="1.8" />
       <module name="watcher" target="1.8" />
       <module name="word_count" target="1.8" />
       <module name="zookeeper" target="1.8" />
