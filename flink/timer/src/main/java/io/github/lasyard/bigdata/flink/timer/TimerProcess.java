@@ -17,12 +17,8 @@
 package io.github.lasyard.bigdata.flink.timer;
 
 import com.opencsv.bean.CsvToBeanBuilder;
+import io.github.lasyard.bigdata.flink.helper.AlwaysEmitStrategy;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.flink.api.common.eventtime.Watermark;
-import org.apache.flink.api.common.eventtime.WatermarkGenerator;
-import org.apache.flink.api.common.eventtime.WatermarkGeneratorSupplier;
-import org.apache.flink.api.common.eventtime.WatermarkOutput;
-import org.apache.flink.api.common.eventtime.WatermarkStrategy;
 import org.apache.flink.api.common.state.ValueState;
 import org.apache.flink.api.common.state.ValueStateDescriptor;
 import org.apache.flink.api.common.typeinfo.TypeInformation;
@@ -55,18 +51,7 @@ public final class TimerProcess {
             .build()
             .parse();
         DataStream<Event> dataStream = env.fromCollection(events).assignTimestampsAndWatermarks(
-            WatermarkStrategy.forGenerator(
-                (WatermarkGeneratorSupplier<Event>) context -> new WatermarkGenerator<Event>() {
-                    @Override
-                    public void onEvent(Event event, long eventTimestamp, WatermarkOutput output) {
-                        output.emitWatermark(new Watermark(eventTimestamp));
-                    }
-
-                    @Override
-                    public void onPeriodicEmit(WatermarkOutput output) {
-                    }
-                })
-                .withTimestampAssigner((event, timestamp) -> event.getTimestamp().getTime())
+            new AlwaysEmitStrategy<>(event -> event.getTimestamp().getTime())
         );
         DataStream<Tuple2<Event, Timestamp>> result = dataStream
             .keyBy(Event::getType)

@@ -8,27 +8,33 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="watcher" />
+        <module name="io" />
+        <module name="notify" />
+        <module name="cep" />
+        <module name="sql" />
         <module name="timer" />
         <module name="word_count" />
         <module name="curator" />
         <module name="streaming" />
-        <module name="io" />
+        <module name="helper" />
         <module name="kafka" />
         <module name="dataset" />
-        <module name="notify" />
         <module name="hbase" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="bigdata-parent" target="1.8" />
+      <module name="cep" target="1.8" />
       <module name="curator" target="1.8" />
       <module name="dataset" target="1.8" />
       <module name="flink" target="1.8" />
       <module name="hadoop" target="1.8" />
       <module name="hbase" target="1.8" />
+      <module name="helper" target="1.8" />
       <module name="io" target="1.8" />
       <module name="kafka" target="1.8" />
       <module name="notify" target="1.8" />
+      <module name="sql" target="1.8" />
       <module name="streaming" target="1.8" />
       <module name="timer" target="1.8" />
       <module name="watcher" target="1.8" />

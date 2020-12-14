@@ -90,7 +90,7 @@
         <kafka.version>2.6.0</kafka.version>
 
         <!-- flink -->
-        <flink.version>1.12.0</flink.version>
+        <flink.version>1.11.2</flink.version>
 
         <!-- facilities -->
         <lombok.version>1.18.16</lombok.version>
@@ -110,6 +110,7 @@
         <junit.version>4.12</junit.version>
 
         <!-- plugins -->
+        <maven-surefire.version>3.0.0-M5</maven-surefire.version>
         <maven-failsafe.version>3.0.0-M5</maven-failsafe.version>
         <maven-jar.version>3.2.0</maven-jar.version>
         <maven-checkstyle.version>3.1.1</maven-checkstyle.version>
@@ -222,6 +223,32 @@
                 <artifactId>flink-runtime-web_2.12</artifactId>
                 <version>${flink.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.apache.flink</groupId>
+                <artifactId>flink-cep_2.12</artifactId>
+                <version>${flink.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.flink</groupId>
+                <artifactId>flink-table-api-java-bridge_2.12</artifactId>
+                <version>${flink.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.flink</groupId>
+                <artifactId>flink-table-planner-blink_2.12</artifactId>
+                <version>${flink.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.flink</groupId>
+                <artifactId>flink-test-utils_2.12</artifactId>
+                <version>${flink.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.apache.logging.log4j</groupId>
+                        <artifactId>log4j-slf4j-impl</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
 
             <!-- facilities -->
             <dependency>
@@ -272,6 +299,13 @@
                 <artifactId>junit</artifactId>
                 <version>${junit.version}</version>
             </dependency>
+
+            <!-- this project -->
+            <dependency>
+                <groupId>io.github.lasyard.bigdata</groupId>
+                <artifactId>flink-helper</artifactId>
+                <version>1.0.0-SNAPSHOT</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -313,6 +347,11 @@
     <build>
         <pluginManagement>
             <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${maven-surefire.version}</version>
+                </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-failsafe-plugin</artifactId>
@@ -368,6 +407,15 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <parallel>methods</parallel>
+                    <perCoreThreadCount>true</perCoreThreadCount>
+                    <threadCount>1</threadCount>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <executions>
                     <execution>
@@ -377,6 +425,9 @@
                         </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <parallel>none</parallel>
+                </configuration>
             </plugin>
         </plugins>
     </build>
