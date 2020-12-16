@@ -17,6 +17,7 @@
         <module name="curator" />
         <module name="streaming" />
         <module name="helper" />
+        <module name="spark" />
         <module name="kafka" />
         <module name="dataset" />
         <module name="hbase" />
@@ -34,6 +35,7 @@
       <module name="io" target="1.8" />
       <module name="kafka" target="1.8" />
       <module name="notify" target="1.8" />
+      <module name="spark" target="1.8" />
       <module name="sql" target="1.8" />
       <module name="streaming" target="1.8" />
       <module name="timer" target="1.8" />
