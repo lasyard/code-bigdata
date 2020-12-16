@@ -96,7 +96,7 @@ public class KafkaIT {
             consumerProps.put(ConsumerConfig.GROUP_ID_CONFIG, "one");
             consumerProps.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, IntegerDeserializer.class.getName());
             consumerProps.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
-            consumerProps.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+            consumerProps.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest");
             try (Consumer<Integer, String> consumer = new KafkaConsumer<>(consumerProps)) {
                 consumer.subscribe(Collections.singletonList(TOPIC));
                 List<ConsumerRecord<Integer, String>> recordList = new LinkedList<>();
@@ -109,6 +109,7 @@ public class KafkaIT {
                 return recordList;
             }
         });
+        Thread.sleep(1000); // Wait the consumer ready.
         Properties producerProps = new Properties();
         producerProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, BOOTSTRAP_SERVERS);
         producerProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, IntegerSerializer.class.getName());
