@@ -16,33 +16,41 @@
 
 package io.github.lasyard.bigdata.kafka.camel;
 
+import com.google.common.collect.ImmutableMap;
 import io.github.lasyard.bigdata.kafka.KafkaHelper;
 import io.github.lasyard.bigdata.kafka.KafkaProps;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.camel.Endpoint;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.kafka.KafkaConstants;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.springframework.context.support.AbstractXmlApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import java.util.Map;
+
+import static org.apache.camel.builder.endpoint.StaticEndpointBuilders.kafka;
 import static org.apache.camel.builder.endpoint.StaticEndpointBuilders.mock;
-import static org.apache.camel.builder.endpoint.StaticEndpointBuilders.ref;
 
 @Slf4j
-public class CamelKafkaXmlIT extends CamelSpringTestSupport {
+public class CamelKafkaPartitionIT extends CamelTestSupport {
     private static final KafkaHelper kafka = new KafkaHelper(KafkaProps.BOOTSTRAP_SERVERS);
+    private static String topic;
+    private static String kafkaUri;
+    private static String mockUri;
 
     @BeforeClass
     public static void setupClass() {
+        topic = RandomStringUtils.randomAlphabetic(8);
+        kafkaUri = kafka(topic).brokers(KafkaProps.BOOTSTRAP_SERVERS).getUri();
+        mockUri = mock("read-from-kafka").getUri();
     }
 
     @AfterClass
     public static void tearDownClass() {
-        kafka.deleteTopic("test-camel-kafka");
+        kafka.deleteTopic(topic);
     }
 
     @Override
@@ -57,8 +65,20 @@ public class CamelKafkaXmlIT extends CamelSpringTestSupport {
     }
 
     @Override
-    public AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("test-camel-kafka.xml");
+    public RouteBuilder createRouteBuilder() {
+        return new RouteBuilder() {
+            @Override
+            public void configure() {
+                from(kafkaUri).noAutoStartup()
+                    .process(exchange -> {
+                            for (Map.Entry<String, Object> entry : exchange.getIn().getHeaders().entrySet()) {
+                                log.info("{}: {}", entry.getKey(), entry.getValue().toString());
+                            }
+                        }
+                    )
+                    .to(mockUri);
+            }
+        };
     }
 
     @Test
@@ -66,10 +86,14 @@ public class CamelKafkaXmlIT extends CamelSpringTestSupport {
         context().getRouteController().startAllRoutes();
         Thread.sleep(3000); // Wait receiver ready.
         String testString = RandomStringUtils.randomAlphabetic(16);
-        Endpoint kafkaEnd = context().getEndpoint(ref("kafka").getUri());
-        template().sendBody(kafkaEnd, testString);
-        MockEndpoint mock = context().getEndpoint(mock("read-from-kafka").getUri(), MockEndpoint.class);
+        template().sendBodyAndHeaders(kafkaUri, testString, ImmutableMap.of(
+            KafkaConstants.PARTITION_KEY, 0,
+            KafkaConstants.KEY, "test"
+        ));
+        MockEndpoint mock = context().getEndpoint(mockUri, MockEndpoint.class);
         mock.expectedMessageCount(1);
+        mock.message(0).header(KafkaConstants.PARTITION_KEY).isEqualTo(0);
+        mock.message(0).header(KafkaConstants.KEY).isEqualTo("test");
         mock.message(0).body().isEqualTo(testString);
         mock.assertIsSatisfied();
     }

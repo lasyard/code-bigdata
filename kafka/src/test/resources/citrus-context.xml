@@ -1,0 +1,62 @@
+<!--
+  ~ Copyright 2020 lasyard@github.com
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<spring:beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xmlns:spring="http://www.springframework.org/schema/beans"
+              xmlns:context="http://www.springframework.org/schema/context"
+              xmlns:citrus-camel="http://www.citrusframework.org/schema/camel/config"
+              xmlns="http://www.citrusframework.org/schema/testcase"
+              xsi:schemaLocation="
+              http://www.springframework.org/schema/beans
+              http://www.springframework.org/schema/beans/spring-beans.xsd
+              http://www.springframework.org/schema/context
+              http://www.springframework.org/schema/context/spring-context.xsd
+              http://www.citrusframework.org/schema/testcase
+              http://www.citrusframework.org/schema/testcase/citrus-testcase.xsd
+              http://www.citrusframework.org/schema/camel/config
+              http://www.citrusframework.org/schema/camel/config/citrus-camel-config.xsd
+              http://camel.apache.org/schema/spring
+              http://camel.apache.org/schema/spring/camel-spring.xsd">
+
+    <context:property-placeholder location="classpath:kafka.properties"/>
+
+    <camelContext id="kafkaTest" xmlns="http://camel.apache.org/schema/spring">
+        <propertyPlaceholder id="properties">
+            <propertiesLocation resolver="classpath" path="kafka.properties"/>
+        </propertyPlaceholder>
+        <route>
+            <from uri="direct:write-to-kafka"/>
+            <to uri="log:io.github.lasyard.bigdata.kafka.camel.citrus.KafkaXmlIT?level=INFO"/>
+            <to uri="kafka:test-citrus-camel-kafka?brokers={{bootstrap.servers}}"/>
+        </route>
+        <route>
+            <from uri="kafka:test-citrus-camel-kafka?brokers={{bootstrap.servers}}"/>
+            <to uri="log:io.github.lasyard.bigdata.kafka.camel.citrus.KafkaXmlIT?level=INFO"/>
+            <to uri="seda:read-from-kafka"/>
+        </route>
+    </camelContext>
+
+    <citrus-camel:endpoint id="writeKafka"
+                           camel-context="kafkaTest"
+                           endpoint-uri="direct:write-to-kafka"/>
+    <citrus-camel:endpoint id="kafka"
+                           camel-context="kafkaTest"
+                           endpoint-uri="kafka:test-citrus-camel-kafka?brokers=${bootstrap.servers}"/>
+    <citrus-camel:endpoint id="readKafka"
+                           camel-context="kafkaTest"
+                           endpoint-uri="seda:read-from-kafka"/>
+
+</spring:beans>

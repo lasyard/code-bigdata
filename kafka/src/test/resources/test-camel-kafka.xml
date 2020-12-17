@@ -24,11 +24,16 @@
 
     <camelContext id="kafkaTest" xmlns="http://camel.apache.org/schema/spring">
         <propertyPlaceholder id="properties">
-            <propertiesLocation resolver="classpath" path="test-camel-kafka.properties"/>
+            <propertiesLocation resolver="classpath" path="kafka.properties"/>
         </propertyPlaceholder>
+
+        <endpoint id="kafka" uri="kafka:test-camel-kafka">
+            <property key="brokers" value="{{bootstrap.servers}}"/>
+        </endpoint>
+
         <route autoStartup="false">
-            <from uri="{{kafka.uri}}"/>
-            <to uri="{{kafka.read.uri}}"/>
+            <from uri="ref:kafka"/>
+            <to uri="mock:read-from-kafka"/>
         </route>
     </camelContext>
 

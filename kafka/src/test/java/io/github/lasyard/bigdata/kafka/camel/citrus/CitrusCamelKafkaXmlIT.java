@@ -14,18 +14,15 @@
  * limitations under the License.
  */
 
-package io.github.lasyard.bigdata.kafka.camel;
+package io.github.lasyard.bigdata.kafka.camel.citrus;
 
-import java.util.ResourceBundle;
+import com.consol.citrus.annotations.CitrusXmlTest;
+import com.consol.citrus.junit.AbstractJUnit4CitrusTest;
+import org.junit.Test;
 
-public final class Constants {
-    private static final ResourceBundle CONF = ResourceBundle.getBundle("test-camel-kafka");
-
-    static final String KAFKA_URI = CONF.getString("kafka.uri");
-    static final String WRITE_URI = CONF.getString("kafka.write.uri");
-    static final String READ_URI = CONF.getString("kafka.read.uri");
-    static final String TEST_STRING = CONF.getString("test.string");
-
-    private Constants() {
+public class CitrusCamelKafkaXmlIT extends AbstractJUnit4CitrusTest {
+    @Test
+    @CitrusXmlTest(name = "TestCamelKafka")
+    public void testCamelKafka() {
     }
 }

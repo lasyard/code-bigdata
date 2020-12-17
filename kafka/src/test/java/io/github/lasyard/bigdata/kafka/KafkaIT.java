@@ -17,10 +17,7 @@
 package io.github.lasyard.bigdata.kafka;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.kafka.clients.admin.AdminClient;
-import org.apache.kafka.clients.admin.AdminClientConfig;
-import org.apache.kafka.clients.admin.ListTopicsResult;
-import org.apache.kafka.clients.admin.NewTopic;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -35,14 +32,15 @@ import org.apache.kafka.common.serialization.IntegerSerializer;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.time.Duration;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -53,52 +51,38 @@ import static org.junit.Assert.assertThat;
 
 @Slf4j
 public class KafkaIT {
-    private static final String BOOTSTRAP_SERVERS = "las1:9092,las2:9092,las3:9092";
-    private static final String TOPIC = "test";
+    private static final KafkaHelper kafka = new KafkaHelper(KafkaProps.BOOTSTRAP_SERVERS);
+    private static String topic;
 
-    private static AdminClient getAdminClient() {
-        Properties props = new Properties();
-        props.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, BOOTSTRAP_SERVERS);
-        props.put(AdminClientConfig.CLIENT_ID_CONFIG, "KafkaIT");
-        return AdminClient.create(props);
-    }
-
-    private static void createTopic() {
-        try (AdminClient admin = getAdminClient()) {
-            admin.createTopics(Collections.singletonList(new NewTopic(TOPIC, 3, (short) 1)));
-        }
+    @BeforeClass
+    public static void setupClass() {
+        topic = RandomStringUtils.randomAlphabetic(8);
+        kafka.createTopic(topic, 3, (short) 1);
     }
 
     @AfterClass
-    public static void tearDown() {
-        try (AdminClient admin = getAdminClient()) {
-            admin.deleteTopics(Collections.singletonList(TOPIC));
-        }
+    public static void tearDownClass() {
+        kafka.deleteTopic(topic);
     }
 
     @Test
-    public void listTopics() throws Exception {
-        createTopic();
-        try (AdminClient admin = getAdminClient()) {
-            ListTopicsResult result = admin.listTopics();
-            Collection<String> topics = result.names().get();
-            assertThat(topics, hasItem(TOPIC));
-        }
+    public void testListTopics() throws Exception {
+        Set<String> topics = kafka.listTopics();
+        assertThat(topics, hasItem(topic));
     }
 
     @Test
     public void testTxRx() throws Exception {
-        createTopic();
         ExecutorService executor = Executors.newSingleThreadExecutor();
         final Future<List<ConsumerRecord<Integer, String>>> records = executor.submit(() -> {
             Properties consumerProps = new Properties();
-            consumerProps.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, BOOTSTRAP_SERVERS);
+            consumerProps.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafka.getBootstrapServers());
             consumerProps.put(ConsumerConfig.GROUP_ID_CONFIG, "one");
             consumerProps.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, IntegerDeserializer.class.getName());
             consumerProps.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
             consumerProps.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest");
             try (Consumer<Integer, String> consumer = new KafkaConsumer<>(consumerProps)) {
-                consumer.subscribe(Collections.singletonList(TOPIC));
+                consumer.subscribe(Collections.singletonList(topic));
                 List<ConsumerRecord<Integer, String>> recordList = new LinkedList<>();
                 while (recordList.size() < 10) {
                     ConsumerRecords<Integer, String> recs = consumer.poll(Duration.ofMillis(100));
@@ -111,13 +95,13 @@ public class KafkaIT {
         });
         Thread.sleep(1000); // Wait the consumer ready.
         Properties producerProps = new Properties();
-        producerProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, BOOTSTRAP_SERVERS);
+        producerProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafka.getBootstrapServers());
         producerProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, IntegerSerializer.class.getName());
         producerProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         try (Producer<Integer, String> producer = new KafkaProducer<>(producerProps)) {
             for (int count = 0; count < 10; count++) {
                 String value = String.format("Hello %02d", count);
-                producer.send(new ProducerRecord<>(TOPIC, count, value));
+                producer.send(new ProducerRecord<>(topic, count, value));
             }
         }
         List<ConsumerRecord<Integer, String>> recordList = records.get();
