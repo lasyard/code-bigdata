@@ -66,7 +66,7 @@ public class CamelKafkaXmlIT extends CamelSpringTestSupport {
         context().getRouteController().startAllRoutes();
         Thread.sleep(3000); // Wait receiver ready.
         String testString = RandomStringUtils.randomAlphabetic(16);
-        Endpoint kafkaEnd = context().getEndpoint(ref("kafka").getUri());
+        Endpoint kafkaEnd = context().getEndpoint(ref("ed").getUri());
         template().sendBody(kafkaEnd, testString);
         MockEndpoint mock = context().getEndpoint(mock("read-from-kafka").getUri(), MockEndpoint.class);
         mock.expectedMessageCount(1);

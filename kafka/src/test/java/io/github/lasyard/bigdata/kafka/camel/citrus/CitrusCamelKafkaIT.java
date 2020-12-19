@@ -24,8 +24,7 @@ import org.junit.Test;
 public class CitrusCamelKafkaIT extends JUnit4CitrusTestDesigner {
     @Test
     @CitrusTest
-    public void testCamelKafka() {
-        camel().context("kafkaTest").start();
+    public void test() {
         sleep(3000); // Wait receiver ready.
         send("writeKafka")
             .header(KafkaConstants.KEY, "test")
@@ -34,6 +33,6 @@ public class CitrusCamelKafkaIT extends JUnit4CitrusTestDesigner {
         receive("readKafka")
             .header(KafkaConstants.PARTITION, 0)
             .payload("Test in java.");
-        camel().context("kafkaTest").stop();
+        assert applicationContext != null;
     }
 }

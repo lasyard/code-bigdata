@@ -27,12 +27,12 @@
             <propertiesLocation resolver="classpath" path="kafka.properties"/>
         </propertyPlaceholder>
 
-        <endpoint id="kafka" uri="kafka:test-camel-kafka">
+        <endpoint id="ed" uri="kafka:test-camel-kafka">
             <property key="brokers" value="{{bootstrap.servers}}"/>
         </endpoint>
 
         <route autoStartup="false">
-            <from uri="ref:kafka"/>
+            <from uri="ref:ed"/>
             <to uri="mock:read-from-kafka"/>
         </route>
     </camelContext>

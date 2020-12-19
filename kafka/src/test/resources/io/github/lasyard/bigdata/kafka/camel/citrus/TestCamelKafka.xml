@@ -16,12 +16,31 @@
 
 <spring:beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
               xmlns:spring="http://www.springframework.org/schema/beans"
+              xmlns:context="http://www.springframework.org/schema/context"
               xmlns="http://www.citrusframework.org/schema/testcase"
-              xsi:schemaLocation="
-              http://www.springframework.org/schema/beans
+              xsi:schemaLocation="http://www.springframework.org/schema/beans
               http://www.springframework.org/schema/beans/spring-beans.xsd
+              http://www.springframework.org/schema/context
+              http://www.springframework.org/schema/context/spring-context.xsd
               http://www.citrusframework.org/schema/testcase
               http://www.citrusframework.org/schema/testcase/citrus-testcase.xsd">
+
+    <context:property-placeholder location="classpath:kafka.properties"/>
+
+    <spring:bean id="stopCamel" class="io.github.lasyard.bigdata.kafka.camel.citrus.StopContextAction">
+        <spring:constructor-arg>
+            <spring:ref bean="kafkaTest"/>
+        </spring:constructor-arg>
+    </spring:bean>
+
+    <spring:bean id="deleteTopic" class="io.github.lasyard.bigdata.kafka.citrus.DeleteTopicAction">
+        <spring:constructor-arg value="${bootstrap.servers}"/>
+        <spring:property name="topics">
+            <spring:list>
+                <spring:value>test-citrus-camel-kafka</spring:value>
+            </spring:list>
+        </spring:property>
+    </spring:bean>
 
     <testcase name="TestCamelKafka">
         <description>Test write/read kafka, using camel.</description>

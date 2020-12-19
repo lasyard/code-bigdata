@@ -16,13 +16,17 @@
 
 package io.github.lasyard.bigdata.kafka.camel.citrus;
 
-import com.consol.citrus.annotations.CitrusXmlTest;
-import com.consol.citrus.junit.AbstractJUnit4CitrusTest;
-import org.junit.Test;
+import com.consol.citrus.actions.AbstractTestAction;
+import com.consol.citrus.context.TestContext;
+import lombok.RequiredArgsConstructor;
+import org.apache.camel.CamelContext;
 
-public class CitrusCamelKafkaXmlIT extends AbstractJUnit4CitrusTest {
-    @Test
-    @CitrusXmlTest(name = "TestCamelKafka")
-    public void test() {
+@RequiredArgsConstructor
+public class StopContextAction extends AbstractTestAction {
+    private final CamelContext camelContext;
+
+    @Override
+    public void doExecute(TestContext testContext) {
+        camelContext.stop();
     }
 }

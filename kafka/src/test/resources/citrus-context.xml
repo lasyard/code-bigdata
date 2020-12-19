@@ -18,14 +18,11 @@
               xmlns:spring="http://www.springframework.org/schema/beans"
               xmlns:context="http://www.springframework.org/schema/context"
               xmlns:citrus-camel="http://www.citrusframework.org/schema/camel/config"
-              xmlns="http://www.citrusframework.org/schema/testcase"
               xsi:schemaLocation="
               http://www.springframework.org/schema/beans
               http://www.springframework.org/schema/beans/spring-beans.xsd
               http://www.springframework.org/schema/context
               http://www.springframework.org/schema/context/spring-context.xsd
-              http://www.citrusframework.org/schema/testcase
-              http://www.citrusframework.org/schema/testcase/citrus-testcase.xsd
               http://www.citrusframework.org/schema/camel/config
               http://www.citrusframework.org/schema/camel/config/citrus-camel-config.xsd
               http://camel.apache.org/schema/spring
@@ -37,12 +34,12 @@
         <propertyPlaceholder id="properties">
             <propertiesLocation resolver="classpath" path="kafka.properties"/>
         </propertyPlaceholder>
-        <route>
+        <route id="writeKafka">
             <from uri="direct:write-to-kafka"/>
             <to uri="log:io.github.lasyard.bigdata.kafka.camel.citrus.KafkaXmlIT?level=INFO"/>
             <to uri="kafka:test-citrus-camel-kafka?brokers={{bootstrap.servers}}"/>
         </route>
-        <route>
+        <route id="readKafka">
             <from uri="kafka:test-citrus-camel-kafka?brokers={{bootstrap.servers}}"/>
             <to uri="log:io.github.lasyard.bigdata.kafka.camel.citrus.KafkaXmlIT?level=INFO"/>
             <to uri="seda:read-from-kafka"/>
