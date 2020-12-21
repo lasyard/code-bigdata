@@ -131,6 +131,7 @@
         <maven-surefire.version>3.0.0-M5</maven-surefire.version>
         <maven-failsafe.version>3.0.0-M5</maven-failsafe.version>
         <maven-jar.version>3.2.0</maven-jar.version>
+        <maven-shade.version>3.2.4</maven-shade.version>
         <maven-checkstyle.version>3.1.1</maven-checkstyle.version>
         <exec-maven.version>3.0.0</exec-maven.version>
     </properties>
@@ -224,6 +225,11 @@
             <dependency>
                 <groupId>org.apache.kafka</groupId>
                 <artifactId>kafka-clients</artifactId>
+                <version>${kafka.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.kafka</groupId>
+                <artifactId>kafka-streams</artifactId>
                 <version>${kafka.version}</version>
             </dependency>
 
@@ -460,6 +466,11 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
                     <version>${maven-jar.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-shade-plugin</artifactId>
+                    <version>${maven-shade.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
