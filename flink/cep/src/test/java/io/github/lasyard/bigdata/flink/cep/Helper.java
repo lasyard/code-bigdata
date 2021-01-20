@@ -17,6 +17,8 @@
 package io.github.lasyard.bigdata.flink.cep;
 
 import io.github.lasyard.bigdata.flink.helper.CollectSink;
+import org.apache.flink.api.common.eventtime.IngestionTimeAssigner;
+import org.apache.flink.api.common.eventtime.WatermarkStrategy;
 import org.apache.flink.cep.CEP;
 import org.apache.flink.cep.PatternSelectFunction;
 import org.apache.flink.cep.PatternStream;
@@ -37,7 +39,12 @@ final class Helper {
         final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment()
             .setParallelism(1);
         env.getConfig().disableGenericTypes();
-        DataStream<String> dataStream = env.fromCollection(Arrays.asList(input.split(" ")));
+        // In flink 1.12.0, event time is default, so timestamp is must-have.
+        DataStream<String> dataStream = env.fromCollection(Arrays.asList(input.split(" ")))
+            .assignTimestampsAndWatermarks(
+                WatermarkStrategy.<String>forMonotonousTimestamps()
+                    .withTimestampAssigner(ctx -> new IngestionTimeAssigner<>())
+            );
         PatternStream<String> patternStream = CEP.pattern(dataStream, pattern);
         DataStream<String> result = patternStream.select(new PatternSelectFunction<String, String>() {
             private static final long serialVersionUID = -5708246944590876484L;
